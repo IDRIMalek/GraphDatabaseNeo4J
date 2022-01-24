@@ -2,9 +2,6 @@
 https://docs.google.com/document/d/1AK0o4QIazxQ2XIPxkwWi7nVdaK5SAu4R/edit
 
 
-  git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
-
 Projet DE #3 - Base de données & API de données
 
 
