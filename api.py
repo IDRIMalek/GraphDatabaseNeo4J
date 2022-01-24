@@ -81,12 +81,22 @@ def listlink(username: str = Depends(get_current_username)):
         result=session.run(query).data()
     return {'results': result}
 
-@app.post('/addtechno',tags=["interaction"])
-def addtechno(name, label, link_type, name_to, label_to ,  username: str = Depends(get_current_username)):
+@app.post('/addcandidate',tags=["interaction"])
+def addcandidate(name, skill ,  username: str = Depends(get_current_username)):
     '''
-    This query allow you to add a node. 
+    This query allow you to add skill(languages)a candidate. 
     '''
-    query="MERGE (n:"+ label +"{name:'"+name+"',group:'custom', nodesize:'1'}) MERGE (m:"+ label_to +" {name:'"+name_to+"'}) MERGE (n)-[:"+link_type+"]->(m)Return n.name, ID(n);"
+    query="MERGE (n:candidate{name:'"+name+"',group:'candidate', nodesize:'1'}) MERGE (m:language {name:'"+skill+"'}) MERGE (n)-[:link]->(m)Return n.name, ID(n);"
+    with driver.session() as session:
+        result=session.run(query).data()
+    return {'node added': result}
+
+@app.post('/addprojet',tags=["interaction"])
+def addprojet(name, neededskill ,  username: str = Depends(get_current_username)):
+    '''
+    This query allow you to add a project. 
+    '''
+    query="MERGE (n:project{name:'"+name+"',group:'project', nodesize:'1'}) MERGE (m:language {name:'"+neededskill+"'}) MERGE (n)-[:link]->(m)Return n.name, ID(n);"
     with driver.session() as session:
         result=session.run(query).data()
     return {'node added': result}
@@ -102,12 +112,14 @@ def delete(name,username: str = Depends(get_current_username)):
         result=session.run(query).data()
     return {'results': result}
 
-@app.get('/relation_query',tags=["informations"])
-def relation_query(name, degres:int, username: str = Depends(get_current_username)):
+@app.get('/matchprojet',tags=["informations"])
+def matchprojet(name, degres:int, username: str = Depends(get_current_username)):
     '''
     This query allow you to see nodes related nodes from one particular node. 
     '''
     query="Match (n) WHERE n.name= '"+ name +"' DETACH DELETE n;"
+    
+    
     with driver.session() as session:
         result=session.run(query).data()
     return {'results': result}
