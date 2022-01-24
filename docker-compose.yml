@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  neo4j:
+    image: datascientest/neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    networks:
+      - my_network
+    volumes:
+    - ~/Projet3/import:/import
+  #api:
+  #  image: malekidri/api_projet3
+  #  networks:
+  #    - my_network
+networks:
+  my_network:
