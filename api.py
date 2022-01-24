@@ -9,7 +9,6 @@ import pandas as pd
 from typing import Optional
 from pydantic import BaseModel
 from neo4j import GraphDatabase
-from requestneo4j import *
 
 app = FastAPI(title='Stack Overflow Tag Network')
 
@@ -20,6 +19,9 @@ users_db = {
     "bob": "builder",
     "clementine": "mandarine"
 }
+
+driver = GraphDatabase.driver('bolt://0.0.0.0:7687',
+                              auth=('neo4j', 'neo4j'))
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = True if credentials.username in users_db else False
@@ -49,11 +51,35 @@ def get_status():
         'status': 'ready'
     }
 
-@app.post('/itineraire')
-def itineraire(x1:float,y1:float,x2:float,y2:float, username: str = Depends(get_current_username)):
-
-    result=Shortpath(x1,y1,x2,y2)
+@app.post('/listtechno')
+def listtechno(username: str = Depends(get_current_username)):
+    query='Match (n:language) Return n.name;'
+    with driver.session() as session:
+        result=session.run(query).data()
     return {'results': result}
+
+@app.post('/listgroup')
+def listgroup(username: str = Depends(get_current_username)):
+    query='Match (n) Return distinct(labels(n));'
+    with driver.session() as session:
+        result=session.run(query).data()
+    return {'results': result}
+
+@app.post('/listlink')
+def listlink(username: str = Depends(get_current_username)):
+    query='MATCH (n)-[l]-(m)RETURN distinct(TYPE(l));'
+    with driver.session() as session:
+        result=session.run(query).data()
+    return {'results': result}
+
+@app.post('/addtechno')
+def addtechno(name, label, name_to, label_to , link_type, username: str = Depends(get_current_username)):
+
+    query="MERGE (n:"+ label +"{name:'"+name+"',group:'custom', nodesize:'1'}) MERGE (m:"+ label_to +" {name:'"+name_to+"'}) MERGE (n)-[:"+link_type+"]->(m)Return n.name, ID(n);"
+    with driver.session() as session:
+        result=session.run(query).data()
+    return {'node added': result}
+
 
 if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True, log_level="info")
