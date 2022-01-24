@@ -1,7 +1,7 @@
 # PROJET 3
 
 # First of, you can lauch the project the the cmd below: 
-docker-compose up
+>docker-compose up
 
 #### Don't forget to change the bolt url bolt://0.0.0.0:7687 to  bolt://<ip_machine>:7687
 
@@ -9,10 +9,10 @@ docker-compose up
 ### Now you can load the datas from  stack-overflow-tag-network, the csv files are already in the import folder that is bridged to the container
 https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 
-LOAD CSV WITH HEADERS FROM "file:///stack_network_nodes.csv" AS row 
-MERGE (:language {name: row.name, 
-                    group: row.group, 
-                    nodesize: row.nodesize });
+>LOAD CSV WITH HEADERS FROM "file:///stack_network_nodes.csv" AS row 
+>MERGE (:language {name: row.name, 
+>                    group: row.group, 
+>                    nodesize: row.nodesize });
 
 LOAD CSV WITH HEADERS FROM "file:///stack_network_links.csv" AS row 
 MATCH (a:language) WHERE a.name = row.source 
