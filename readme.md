@@ -3,7 +3,7 @@
 Here are the project instruction: 
  https://docs.google.com/document/d/1AK0o4QIazxQ2XIPxkwWi7nVdaK5SAu4R/edit
 
-For the third step we choose to use neo4j because it was the most exotic kind of database system. 
+For the third step of datascience project we choose to use neo4j because it was the most exotic kind of database system. 
  We choose to populate this with the dataset of related software laguages from stackoverflow data team. 
 https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 
@@ -18,15 +18,15 @@ Normaly you can now reach neo4j browser at: http://localhost:7474/browser/
 Now you can load the datas from  stack-overflow-tag-network, the csv files are already in the import folder that is bridged to the container
 https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 
->LOAD CSV WITH HEADERS FROM "file:///stack_network_nodes.csv" AS row 
->MERGE (:language {name: row.name, 
->                    group: row.group, 
->                    nodesize: row.nodesize });
+LOAD CSV WITH HEADERS FROM "file:///stack_network_nodes.csv" AS row 
+MERGE (:language {name: row.name, 
+                    group: row.group, 
+                    nodesize: row.nodesize });
 
->LOAD CSV WITH HEADERS FROM "file:///stack_network_links.csv" AS row 
->MATCH (a:language) WHERE a.name = row.source 
->MATCH (b:language) WHERE b.name = row.target AND a.name <> b.name
->MERGE (a)-[l:link {value:row.source} ]->(b);
+LOAD CSV WITH HEADERS FROM "file:///stack_network_links.csv" AS row 
+MATCH (a:language) WHERE a.name = row.source 
+MATCH (b:language) WHERE b.name = row.target AND a.name <> b.name
+MERGE (a)-[l:link {value:row.value} ]->(b);
 
 
 Nous avons créer une API avec  FAST API. 
@@ -52,3 +52,5 @@ Aller sur le chemin
 Here the result
 
 ![alt text](https://github.com/IDRIMalek/Projet3/blob/main/example2.png?raw=true)
+
+We could have gone much futher like, having sectors nodes, adding properties to nodes, like: availablities of canditdates, having vizualisation...
