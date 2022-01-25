@@ -9,9 +9,11 @@ services:
       - my_network
     volumes:
     - ~/Projet3/import:/import
-  #api:
-  #  image: malekidri/api_projet3
-  #  networks:
-  #    - my_network
+  api:
+    image: malekidri/api_projet3:latest
+    networks:
+      - my_network
+    ports:
+      - "8000:8000"
 networks:
   my_network:

@@ -10,7 +10,7 @@ from typing import Optional
 from pydantic import BaseModel
 from neo4j import GraphDatabase
 
-app = FastAPI(title='Your cv on neo4j')
+app = FastAPI(title='Compatibilities cv->project with neo4j')
 
 security = HTTPBasic()
 
@@ -82,24 +82,47 @@ def listlink(username: str = Depends(get_current_username)):
     return {'results': result}
 
 @app.post('/addcandidate',tags=["interaction"])
-def addcandidate(name, skill ,  username: str = Depends(get_current_username)):
+def addcandidate(name, skill , value,  username: str = Depends(get_current_username)):
     '''
     This query allow you to add skill(languages)a candidate. 
     '''
-    query="MERGE (n:candidate{name:'"+name+"',group:'candidate', nodesize:'1'}) MERGE (m:language {name:'"+skill+"'}) MERGE (n)-[:link]->(m)Return n.name, ID(n);"
+    name=name.lower()
+    skill=skill.lower()
+    query="MERGE (n:candidate{name:'"+name+"',group:'candidate', nodesize:'1'}) MERGE (m:language {name:'"+skill+"'}) CREATE (n)-[:link{value:"+value+"}]->(m) CREATE (m)-[:link{value:"+value+"}]->(n) Return n.name, ID(n);"
     with driver.session() as session:
         result=session.run(query).data()
     return {'node added': result}
 
+
 @app.post('/addprojet',tags=["interaction"])
-def addprojet(name, neededskill ,  username: str = Depends(get_current_username)):
+def addprojet(name, neededskill, value,  username: str = Depends(get_current_username)):
     '''
     This query allow you to add a project. 
     '''
-    query="MERGE (n:project{name:'"+name+"',group:'project', nodesize:'1'}) MERGE (m:language {name:'"+neededskill+"'}) MERGE (n)-[:link]->(m)Return n.name, ID(n);"
+    name=name.lower()
+    neededskill=neededskill.lower()
+    query="MERGE (n:project{name:'"+name+"',group:'project', nodesize:'1'}) MERGE (m:language {name:'"+neededskill+"'}) CREATE (n)-[:link{value:"+value+"}]->(m) CREATE (m)-[:link{value:"+value+"}]->(n)  Return n.name, ID(n);"
     with driver.session() as session:
         result=session.run(query).data()
     return {'node added': result}
+
+
+@app.get('/matchprojet',tags=["informations"])
+def matchprojet(username: str = Depends(get_current_username)):
+    '''
+    This query allow you to see nodes matching projects for all candidates, up to seconde degrees 
+    '''
+    query="""
+MATCH (c:candidate)-[rc:link]->(sc:language)-[rc2:link]->(sc2:language) , (p:project)-[rp:link]->(sp:language)-[rp2:link]->(sp2:language) 
+WITH collect(distinct sc.name) as l , collect(distinct sc2.name) as l2, collect(distinct sp.name) as lp , collect(distinct sp2.name) as lp2, c, p
+WITH l, l2, lp, lp2, size(lp) as skillsneed, size(lp2) as skill2sneed, c, p
+WITH [n IN l WHERE n IN lp ] as matchskills1, [n IN l2 WHERE n IN lp2 ]as matchskills2, skillsneed, skill2sneed, c, p
+RETURN c.name as candidate, p.name as project, round(size(matchskills1))/skillsneed as first_degree_compatibility,round(size(matchskills2)/skill2sneed) as second_degree_compatibility, matchskills1, matchskills2
+    """
+    
+    with driver.session() as session:
+        result=session.run(query).data()
+    return {'results': result}
 
 @app.post('/delete',tags=["interaction"])
 def delete(name,username: str = Depends(get_current_username)):
@@ -107,19 +130,8 @@ def delete(name,username: str = Depends(get_current_username)):
     '''
     This query allow you to one particular node. 
     '''
+    name=name.lower()
     query="Match (n) WHERE n.name= '"+ name +"' DETACH DELETE n;"
-    with driver.session() as session:
-        result=session.run(query).data()
-    return {'results': result}
-
-@app.get('/matchprojet',tags=["informations"])
-def matchprojet(name, degres:int, username: str = Depends(get_current_username)):
-    '''
-    This query allow you to see nodes related nodes from one particular node. 
-    '''
-    query="Match (n) WHERE n.name= '"+ name +"' DETACH DELETE n;"
-    
-    
     with driver.session() as session:
         result=session.run(query).data()
     return {'results': result}

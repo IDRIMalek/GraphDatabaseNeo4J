@@ -26,7 +26,13 @@ MERGE (:language {name: row.name,
 LOAD CSV WITH HEADERS FROM "file:///stack_network_links.csv" AS row 
 MATCH (a:language) WHERE a.name = row.source 
 MATCH (b:language) WHERE b.name = row.target AND a.name <> b.name
-MERGE (a)-[l:link {value:row.value} ]->(b);
+MERGE (a)-[l:link {value:toFloat(row.value)} ]->(b);
+
+
+MATCH p=(a: candidate {name: "eren"})-[r:link*..]-(b:project) 
+UNWIND r as r2
+WITH sum(r2.value) as t, b
+RETURN count(distinct(b.name)), t
 
 
 Nous avons créer une API avec  FAST API. 
