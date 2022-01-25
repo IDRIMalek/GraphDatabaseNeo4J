@@ -10,7 +10,9 @@ services:
     volumes:
     - ~/Projet3/import:/import
   api:
-    image: malekidri/api_projet3:latest
+    image: malekidri/api_projet3:1.0
+    depends_on:
+      - neo4j
     networks:
       - my_network
     ports:

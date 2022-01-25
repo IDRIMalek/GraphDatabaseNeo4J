@@ -20,8 +20,26 @@ users_db = {
     "clementine": "mandarine"
 }
 
-driver = GraphDatabase.driver('bolt://0.0.0.0:7687',
+driver = GraphDatabase.driver('bolt://neo4j:7687',
                               auth=('neo4j', 'neo4j'))
+
+# chargement des données initiales 
+queryinit="""
+LOAD CSV WITH HEADERS FROM "file:///stack_network_nodes.csv" AS row 
+MERGE (:language {name: row.name, 
+                    group: row.group, 
+                    nodesize: row.nodesize });
+
+LOAD CSV WITH HEADERS FROM "file:///stack_network_links.csv" AS row 
+MATCH (a:language) WHERE a.name = row.source 
+MATCH (b:language) WHERE b.name = row.target AND a.name <> b.name
+MERGE (a)-[l:link {value: toFloat(row.value)} ]->(b);
+
+"""
+
+with driver.session() as session:
+    result=session.run(queryinit).data()
+    print("neo4j datas loaded..........")
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = True if credentials.username in users_db else False
@@ -82,26 +100,26 @@ def listlink(username: str = Depends(get_current_username)):
     return {'results': result}
 
 @app.post('/addcandidate',tags=["interaction"])
-def addcandidate(name, skill , value,  username: str = Depends(get_current_username)):
+def addcandidate(name, skill ,  username: str = Depends(get_current_username)):
     '''
     This query allow you to add skill(languages)a candidate. 
     '''
     name=name.lower()
     skill=skill.lower()
-    query="MERGE (n:candidate{name:'"+name+"',group:'candidate', nodesize:'1'}) MERGE (m:language {name:'"+skill+"'}) CREATE (n)-[:link{value:"+value+"}]->(m) CREATE (m)-[:link{value:"+value+"}]->(n) Return n.name, ID(n);"
+    query="MERGE (n:candidate{name:'"+name+"',group:'candidate', nodesize:'1'}) MERGE (m:language {name:'"+skill+"'}) CREATE (n)-[:link]->(m)  Return n.name, ID(n);"
     with driver.session() as session:
         result=session.run(query).data()
     return {'node added': result}
 
 
 @app.post('/addprojet',tags=["interaction"])
-def addprojet(name, neededskill, value,  username: str = Depends(get_current_username)):
+def addprojet(name, neededskill,  username: str = Depends(get_current_username)):
     '''
     This query allow you to add a project. 
     '''
     name=name.lower()
     neededskill=neededskill.lower()
-    query="MERGE (n:project{name:'"+name+"',group:'project', nodesize:'1'}) MERGE (m:language {name:'"+neededskill+"'}) CREATE (n)-[:link{value:"+value+"}]->(m) CREATE (m)-[:link{value:"+value+"}]->(n)  Return n.name, ID(n);"
+    query="MERGE (n:project{name:'"+name+"',group:'project', nodesize:'1'}) MERGE (m:language {name:'"+neededskill+"'}) CREATE (n)-[:link]->(m) Return n.name, ID(n);"
     with driver.session() as session:
         result=session.run(query).data()
     return {'node added': result}
