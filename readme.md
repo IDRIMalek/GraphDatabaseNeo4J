@@ -47,7 +47,7 @@ Normalement neo4j browser at: http://localhost:7474/browser/
 Les CSV se trouvent dans le volume "/import" , ce volume et bridgé au dossier du même nom "/import" du container neo4j.  le chargement se fait donc automatiquement via l'api. 
 https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 
-## Quelques exemples: 
+## Illustrations: 
 
 
 1-docker-compose:
