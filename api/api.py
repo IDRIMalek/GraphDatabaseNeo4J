@@ -75,7 +75,7 @@ def get_status():
         'status': 'ready'
     }
 
-@app.get('/listtechno',tags=["informations"])
+@app.get('/listtechno',tags=["Informations"])
 def listtechno(username: str = Depends(get_current_username)):
     '''
     This query allow you to see all node languages. 
@@ -85,7 +85,7 @@ def listtechno(username: str = Depends(get_current_username)):
         result=session.run(query).data()
     return {'results': result}
 
-@app.get('/listgroup',tags=["informations"])
+@app.get('/listgroup',tags=["Informations"])
 def listgroup(username: str = Depends(get_current_username)):
     '''
     This query allow you to see all kind of labels(groups). 
@@ -95,7 +95,7 @@ def listgroup(username: str = Depends(get_current_username)):
         result=session.run(query).data()
     return {'results': result}
 
-@app.get('/listlink',tags=["informations"])
+@app.get('/listlink',tags=["Informations"])
 def listlink(username: str = Depends(get_current_username)):
     '''
     This query allow you to see all kind of relationships. 
@@ -105,7 +105,7 @@ def listlink(username: str = Depends(get_current_username)):
         result=session.run(query).data()
     return {'results': result}
 
-@app.post('/addcandidate',tags=["interaction"])
+@app.post('/addcandidate',tags=["Interaction"])
 def addcandidate(name, skill ,  username: str = Depends(get_current_username)):
     '''
     This query allow you to add skill(languages)a candidate. 
@@ -118,7 +118,7 @@ def addcandidate(name, skill ,  username: str = Depends(get_current_username)):
     return {'node added': result}
 
 
-@app.post('/addprojet',tags=["interaction"])
+@app.post('/addprojet',tags=["Interaction"])
 def addprojet(name, neededskill,  username: str = Depends(get_current_username)):
     '''
     This query allow you to add a project. 
@@ -131,7 +131,7 @@ def addprojet(name, neededskill,  username: str = Depends(get_current_username))
     return {'node added': result}
 
 
-@app.get('/matchprojet',tags=["informations"])
+@app.get('/matchprojet',tags=["Informations"])
 def matchprojet(username: str = Depends(get_current_username)):
     '''
     This query allow you to see nodes matching projects for all candidates, up to seconde degrees 
@@ -148,7 +148,7 @@ def matchprojet(username: str = Depends(get_current_username)):
         result=session.run(query).data()
     return {'results': result}
 
-@app.post('/delete',tags=["interaction"])
+@app.post('/delete',tags=["Interaction"])
 def delete(name,username: str = Depends(get_current_username)):
 
     '''
