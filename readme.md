@@ -2,8 +2,8 @@
 
 
 ## Introduction
-Pour cette 3eme partie du projet demandé par Datascientest, nous avons choisi d'utiliser le système de base de donnée de neo4j. 
-Nous trouvons que travailler avec neo4j nous demande de faire un effort particulier de reflexion car ce système nous oblige à réflechire l'orchestration des données de façon différente. 
+Pour cette 3eme partie du projet demandé par Datascientest, nous avons choisi d'utiliser le système de base de données de neo4j. 
+Nous trouvons que travailler avec neo4j nous demande de faire un effort particulier de reflexion car ce système nous oblige à réflechir l'orchestration des données de façon différente. 
 Voici les instructions pour le projet 3: 
  https://docs.google.com/document/d/1AK0o4QIazxQ2XIPxkwWi7nVdaK5SAu4R/edit
 
@@ -15,10 +15,15 @@ En effet nous avons imaginer que les profiles des personnes pourraient être ajo
 
 ## Fonctionnement
 
-Tout est gérer via un docker-compose qui lance la base de données neo4j, un tunnel en local permet d'accéder à l'interface via l'adresse suivante   http://localhost:7474/browser/  puis ensuite l'api est accessible via cette adresse http://localhost:8000/docs#/ . 
+Tout est gérer via un docker-compose qui lance la base de données neo4j, un tunnel en local permet d'accéder à l'interface via l'adresse suivante   http://localhost:7474/browser/  
+username : neo4j 
+password : neo4j
+
+Puis ensuite l'api est accessible via cette adresse http://localhost:8000/docs#/ . 
 L'api charge les noeuds et les liens du dataset de  stack-overflow-tag-network dans la base de donnée.
 IL faut s'identifer avec les identifiants suivant: 
-ID: "alice" MP: "wonderland"
+ID: "alice" 
+MP: "wonderland"
 
 Il est ensuite possible, via l'api de requêter: 
 - Informations
@@ -30,34 +35,20 @@ Il est ensuite possible, via l'api de requêter:
     - addcandidate : possibiliter d'ajouter un candidat
     - addprojet : possibiliter d'ajouter un projet
     - delete : Suppersion d'un noeud et de ses liaisons
-    
-# Lancer l'api
+
+## Utilisation de l'api
 Dans un premier temps il suffit de lancer le docker compose: 
 >docker-compose up
 
 Il ne faut pas oublier de changer l'ip bolt comme ceci: bolt://0.0.0.0:7687 to  bolt://<ip_machine>:7687
 
 Normalement neo4j browser at: http://localhost:7474/browser/
-Now you can load the datas from  stack-overflow-tag-network, the csv files are already in the import folder that is bridged to the container
+
+Les CSV se trouvent dans le volume "/import" , ce volume et bridgé au dossier du même nom "/import" du container neo4j.  le chargement se fait donc automatiquement via l'api. 
 https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 
+## Quelques exemples: 
 
-Nous avons créer une API avec  FAST API. 
-Dans un premier temps, il faut créer un envirronement virtuel: 
->sudo apt-get install python3-venv
->python3 -m venv .
->source bin/activate
-Charger les librairies Python se trouvant dans requirements.txt:
-> pip install -r requirements.txt
-
-Lancer l'api:
-> uvicorn api:app --reload
-Se rendre sur l'api en local
->http://127.0.0.1:8000/docs#
-Pour s'identifier il faut utiliser l'identifiant: 
->l'identifiant:"alice" et me mot de passe: "wonderland"
-Aller sur le chemin 
->"http://127.0.0.1:8000/docs#/default/itineraire_itineraire_post
 
 
 ![alt text](https://github.com/IDRIMalek/Projet3/blob/main/example.png?raw=true)
@@ -66,6 +57,11 @@ Here the result
 
 ![alt text](https://github.com/IDRIMalek/Projet3/blob/main/example2.png?raw=true)
 
-Nous arrions pue aller beaucoup plus loin, comme ajouter les secteurs d'activités, changer la propriété des noeuds des candidats afin de savoir s'il étaient disponible, obtenir une visualisation sur une interface web à l'aide de avec Neovis.js par exemple
+## Les difficultés rencontrées. 
+- Le choix du système de base de données et du dataset à pris pas mal de temps, il y avait une certaine liberté dans cette étape du projet que nous avions pas dans les autres. ce qui peut être à double tranchant. 
+- Lors du lancement du docker compose, l'api n'arivait pas à se connecter à la base de données car celle-ci n'était pas encore en service malgré le fait que nous aillont ajouter la dependence "depend_on" permetant de savoir si un container est actif avant d'en lancer un autre.  La solution a été d'ajouter le paramètre "healthcheck" qui permet de verifier si un service est veritablement en marche  
+
+## Aller plus loin
+Nous arions put aller beaucoup plus loin, comme ajouter les secteurs d'activité, changer la propriété des noeuds des candidats afin de savoir s'ils étaient disponibles, obtenir une visualisation sur une interface web a l'aide d'avec Neovis.js par exemple
 https://neo4j.com/developer/tools-graph-visualization/. 
-Ce projet est plein de perspectives mais pour le cahier des charges demandé par datascientest nous en somme resté aux requêtes basiques. 
+Ce projet est plein de perspectives mais pour le cahier des charges demandé par datascientest nous en sommes restés aux requêtes basiques. 
