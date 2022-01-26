@@ -16,7 +16,7 @@ services:
         retries: 20
         start_period: 3s
   api:
-    image: malekidri/api_projet3:last
+    image: malekidri/api_projet3:latest
     depends_on:
       neo4j:
         condition: service_healthy
