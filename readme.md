@@ -72,10 +72,12 @@ https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 ![alt text](https://github.com/IDRIMalek/Projet3/blob/main/pictures/matchview.png)
 
 ## Les difficultés rencontrées. 
+
 - Le choix du système de base de données et du dataset à pris pas mal de temps, il y avait une certaine liberté dans cette étape du projet que nous avions pas dans les autres. ce qui peut être à double tranchant. 
 - Lors du lancement du docker compose, l'api n'arivait pas à se connecter à la base de données car celle-ci n'était pas encore en service malgré le fait que nous aillons ajouter la dependence "depend_on" permetant de savoir si un container est actif avant d'en lancer un autre.  La solution a été d'ajouter le paramètre "healthcheck" qui permet de verifier si un service est veritablement en marche . 
 
 ## Aller plus loin
+
 Nous arions put aller beaucoup plus loin, comme ajouter les secteurs d'activités, changer la propriété des noeuds des candidats afin de savoir s'ils sont disponibles, obtenir une visualisation sur une interface web a l'aide d'avec Neovis.js par exemple
 https://neo4j.com/developer/tools-graph-visualization/. 
 Ce projet est plein de perspectives mais pour le cahier des charges demandé par datascientest nous en sommes restés aux requêtes simples. 
