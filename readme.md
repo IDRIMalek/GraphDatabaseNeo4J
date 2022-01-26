@@ -27,14 +27,14 @@ MP: "wonderland"
 
 Il est ensuite possible, via l'api de requêter: 
 - Informations
-    - listtechno : liste des noms des techologies
-    - listgroup : Liste des groupes des technologies
-    - listlink : liste des liens de ces technologies
-    - matchprojet: voir la compatibilitée entre un projet et un candidat
+    - listtechno : liste des noms des techologies.
+    - listgroup : Liste des groupes des technologies.
+    - listlink : liste des liens de ces technologies.
+    - matchprojet: voir la compatibilitée entre un projet et un candidat.
 - Interaction
-    - addcandidate : possibiliter d'ajouter un candidat
-    - addprojet : possibiliter d'ajouter un projet
-    - delete : Suppersion d'un noeud et de ses liaisons
+    - addcandidate : possibiliter d'ajouter un candidat.
+    - addprojet : possibiliter d'ajouter un projet.
+    - delete : Suppression d'un noeud et de ses liaisons.
 
 ## Utilisation de l'api
 Dans un premier temps il suffit de lancer le docker compose: 
@@ -73,9 +73,9 @@ https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 
 ## Les difficultés rencontrées. 
 - Le choix du système de base de données et du dataset à pris pas mal de temps, il y avait une certaine liberté dans cette étape du projet que nous avions pas dans les autres. ce qui peut être à double tranchant. 
-- Lors du lancement du docker compose, l'api n'arivait pas à se connecter à la base de données car celle-ci n'était pas encore en service malgré le fait que nous aillont ajouter la dependence "depend_on" permetant de savoir si un container est actif avant d'en lancer un autre.  La solution a été d'ajouter le paramètre "healthcheck" qui permet de verifier si un service est veritablement en marche  
+- Lors du lancement du docker compose, l'api n'arivait pas à se connecter à la base de données car celle-ci n'était pas encore en service malgré le fait que nous aillont ajouter la dependence "depend_on" permetant de savoir si un container est actif avant d'en lancer un autre.  La solution a été d'ajouter le paramètre "healthcheck" qui permet de verifier si un service est veritablement en marche . 
 
 ## Aller plus loin
-Nous arions put aller beaucoup plus loin, comme ajouter les secteurs d'activité, changer la propriété des noeuds des candidats afin de savoir s'ils étaient disponibles, obtenir une visualisation sur une interface web a l'aide d'avec Neovis.js par exemple
+Nous arions put aller beaucoup plus loin, comme ajouter les secteurs d'activités, changer la propriété des noeuds des candidats afin de savoir s'ils sont disponibles, obtenir une visualisation sur une interface web a l'aide d'avec Neovis.js par exemple
 https://neo4j.com/developer/tools-graph-visualization/. 
-Ce projet est plein de perspectives mais pour le cahier des charges demandé par datascientest nous en sommes restés aux requêtes basiques. 
+Ce projet est plein de perspectives mais pour le cahier des charges demandé par datascientest nous en sommes restés aux requêtes simples. 
