@@ -10,36 +10,43 @@ from typing import Optional
 from pydantic import BaseModel
 from neo4j import GraphDatabase
 
+
+
 app = FastAPI(title='Compatibilities cv->project with neo4j')
 
 security = HTTPBasic()
-
+#base de donnée utilisateurs
 users_db = {
     "alice": "wonderland",
     "bob": "builder",
     "clementine": "mandarine"
 }
 
-driver = GraphDatabase.driver('bolt://neo4j:7687',
-                              auth=('neo4j', 'neo4j'))
+driver = GraphDatabase.driver('bolt://neo4j:7687', auth=('neo4j', 'neo4j'))
 
 # chargement des données initiales 
-queryinit="""
+# requête pour charger les noeuds
+queryinit1="""
 LOAD CSV WITH HEADERS FROM "file:///stack_network_nodes.csv" AS row 
 MERGE (:language {name: row.name, 
                     group: row.group, 
                     nodesize: row.nodesize });
-
+"""
+# requête pour charger les liens
+queryinit2="""
 LOAD CSV WITH HEADERS FROM "file:///stack_network_links.csv" AS row 
 MATCH (a:language) WHERE a.name = row.source 
 MATCH (b:language) WHERE b.name = row.target AND a.name <> b.name
 MERGE (a)-[l:link {value: toFloat(row.value)} ]->(b);
 
 """
-
+# Chargement des données
 with driver.session() as session:
-    result=session.run(queryinit).data()
-    print("neo4j datas loaded..........")
+    result=session.run(queryinit1).data()
+    print("neo4j datas nodes loaded..........")
+    result=session.run(queryinit2).data()
+    print("neo4j datas links loaded..........")
+
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = True if credentials.username in users_db else False
@@ -61,7 +68,6 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
 @app.get('/')
 def get_index():
     return {'data': 'hello world'}
-
 
 @app.get('/status')
 def get_status():
@@ -131,11 +137,11 @@ def matchprojet(username: str = Depends(get_current_username)):
     This query allow you to see nodes matching projects for all candidates, up to seconde degrees 
     '''
     query="""
-MATCH (c:candidate)-[rc:link]->(sc:language)-[rc2:link]->(sc2:language) , (p:project)-[rp:link]->(sp:language)-[rp2:link]->(sp2:language) 
-WITH collect(distinct sc.name) as l , collect(distinct sc2.name) as l2, collect(distinct sp.name) as lp , collect(distinct sp2.name) as lp2, c, p
-WITH l, l2, lp, lp2, size(lp) as skillsneed, size(lp2) as skill2sneed, c, p
-WITH [n IN l WHERE n IN lp ] as matchskills1, [n IN l2 WHERE n IN lp2 ]as matchskills2, skillsneed, skill2sneed, c, p
-RETURN c.name as candidate, p.name as project, round(size(matchskills1))/skillsneed as first_degree_compatibility,round(size(matchskills2)/skill2sneed) as second_degree_compatibility, matchskills1, matchskills2
+    MATCH (c:candidate)-[rc:link]->(sc:language)-[rc2:link]->(sc2:language) , (p:project)-[rp:link]->(sp:language)-[rp2:link]->(sp2:language) 
+    WITH collect(distinct sc.name) as l , collect(distinct sc2.name) as l2, collect(distinct sp.name) as lp , collect(distinct sp2.name) as lp2, c, p
+    WITH l, l2, lp, lp2, size(lp) as skillsneed, size(lp2) as skill2sneed, c, p
+    WITH [n IN l WHERE n IN lp ] as matchskills1, [n IN l2 WHERE n IN lp2 ]as matchskills2, skillsneed, skill2sneed, c, p
+    RETURN c.name as candidate, p.name as project, round(size(matchskills1))/skillsneed as first_degree_compatibility,round(size(matchskills2)/skill2sneed) as second_degree_compatibility, matchskills1, matchskills2
     """
     
     with driver.session() as session:

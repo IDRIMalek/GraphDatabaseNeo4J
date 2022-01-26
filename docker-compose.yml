@@ -9,13 +9,21 @@ services:
       - my_network
     volumes:
     - ~/Projet3/import:/import
+    healthcheck:
+        test: wget http://localhost:7474 || exit 1
+        interval: 1s
+        timeout: 10s
+        retries: 20
+        start_period: 3s
   api:
-    image: malekidri/api_projet3:1.0
+    image: malekidri/api_projet3:last
     depends_on:
-      - neo4j
+      neo4j:
+        condition: service_healthy
     networks:
       - my_network
     ports:
       - "8000:8000"
+
 networks:
   my_network:
