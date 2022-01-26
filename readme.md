@@ -1,38 +1,45 @@
 # PROJET 3
 
-Here are the project instruction: 
+
+## Introduction
+Pour cette 3eme partie du projet demandé par Datascientest, nous avons choisi d'utiliser le système de base de donnée de neo4j. 
+Nous trouvons que travailler avec neo4j nous demande de faire un effort particulier de reflexion car ce système nous oblige à réflechire l'orchestration des données de façon différente. 
+Voici les instructions pour le projet 3: 
  https://docs.google.com/document/d/1AK0o4QIazxQ2XIPxkwWi7nVdaK5SAu4R/edit
 
-For the third step of datascience project we choose to use neo4j because it was the most exotic kind of database system. 
- We choose to populate this with the dataset of related software laguages from stackoverflow data team. 
+Nous avons choisi de coupler le sujet avec le dataset de l'équipe data de stackoverflow, car nous trouvons assez intéressant de voir l'ecosystème des différentes technologies (language informatique) ainsi que leurs intéractions. 
 https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 
-We choose to call the little projet "Your cv on neo4j"
+Nous avons décidé d'appeler cette api "Your cv on neo4j"
+En effet nous avons imaginer que les profiles des personnes pourraient être ajouter à ce type de base de données ainsi que les projets afin de connaître les disponibilité mais aussi les compétences qui matcheraient avec les projets. 
 
-First of, you can lauch the project the the cmd below: 
+## Fonctionnement
+
+Tout est gérer via un docker-compose qui lance la base de données neo4j, un tunnel en local permet d'accéder à l'interface via l'adresse suivante   http://localhost:7474/browser/  puis ensuite l'api est accessible via cette adresse http://localhost:8000/docs#/ . 
+L'api charge les noeuds et les liens du dataset de  stack-overflow-tag-network dans la base de donnée.
+IL faut s'identifer avec les identifiants suivant: 
+ID: "alice" MP: "wonderland"
+
+Il est ensuite possible, via l'api de requêter: 
+- Informations
+    - listtechno : liste des noms des techologies
+    - listgroup : Liste des groupes des technologies
+    - listlink : liste des liens de ces technologies
+    - matchprojet: voir la compatibilitée entre un projet et un candidat
+- Interaction
+    - addcandidate : possibiliter d'ajouter un candidat
+    - addprojet : possibiliter d'ajouter un projet
+    - delete : Suppersion d'un noeud et de ses liaisons
+    
+# Lancer l'api
+Dans un premier temps il suffit de lancer le docker compose: 
 >docker-compose up
 
-Don't forget to change the bolt url bolt://0.0.0.0:7687 to  bolt://<ip_machine>:7687
+Il ne faut pas oublier de changer l'ip bolt comme ceci: bolt://0.0.0.0:7687 to  bolt://<ip_machine>:7687
 
-Normaly you can now reach neo4j browser at: http://localhost:7474/browser/
+Normalement neo4j browser at: http://localhost:7474/browser/
 Now you can load the datas from  stack-overflow-tag-network, the csv files are already in the import folder that is bridged to the container
 https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
-
-LOAD CSV WITH HEADERS FROM "file:///stack_network_nodes.csv" AS row 
-MERGE (:language {name: row.name, 
-                    group: row.group, 
-                    nodesize: row.nodesize });
-
-LOAD CSV WITH HEADERS FROM "file:///stack_network_links.csv" AS row 
-MATCH (a:language) WHERE a.name = row.source 
-MATCH (b:language) WHERE b.name = row.target AND a.name <> b.name
-MERGE (a)-[l:link {value:toFloat(row.value)} ]->(b);
-
-
-MATCH p=(a: candidate {name: "eren"})-[r:link*..]-(b:project) 
-UNWIND r as r2
-WITH sum(r2.value) as t, b
-RETURN count(distinct(b.name)), t
 
 
 Nous avons créer une API avec  FAST API. 
@@ -59,4 +66,6 @@ Here the result
 
 ![alt text](https://github.com/IDRIMalek/Projet3/blob/main/example2.png?raw=true)
 
-We could have gone much futher like, having sectors nodes, adding properties to nodes, like: availablities of canditdates, having vizualisation...
+Nous arrions pue aller beaucoup plus loin, comme ajouter les secteurs d'activités, changer la propriété des noeuds des candidats afin de savoir s'il étaient disponible, obtenir une visualisation sur une interface web à l'aide de avec Neovis.js par exemple
+https://neo4j.com/developer/tools-graph-visualization/. 
+Ce projet est plein de perspectives mais pour le cahier des charges demandé par datascientest nous en somme resté aux requêtes basiques. 
