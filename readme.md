@@ -50,12 +50,26 @@ https://www.kaggle.com/stackoverflow/stack-overflow-tag-network
 ## Quelques exemples: 
 
 
+1-docker-compose:
+![alt text](https://github.com/IDRIMalek/Projet3/blob/main/pictures/docker-compose.png)
 
-![alt text](https://github.com/IDRIMalek/Projet3/blob/main/example.png?raw=true)
+2-Connexion neo4j
+![alt text](https://github.com/IDRIMalek/Projet3/blob/main/pictures/neo4jconnexion.png)
 
-Here the result
+3-Vue de l'ecosystème: 
+![alt text](https://github.com/IDRIMalek/Projet3/blob/main/pictures/ecosystem.png)
 
-![alt text](https://github.com/IDRIMalek/Projet3/blob/main/example2.png?raw=true)
+4-Post candidate (ajouter un candidat): 
+![alt text](https://github.com/IDRIMalek/Projet3/blob/main/pictures/candidate.png)
+
+5-Post project (ajouter un projet): 
+![alt text](https://github.com/IDRIMalek/Projet3/blob/main/pictures/projet.png)
+
+6-Vue candidats et projets neo4j: 
+![alt text](https://github.com/IDRIMalek/Projet3/blob/main/pictures/neo4jview.png)
+
+7-Resultat requête "match": 
+![alt text](https://github.com/IDRIMalek/Projet3/blob/main/pictures/matchview.png)
 
 ## Les difficultés rencontrées. 
 - Le choix du système de base de données et du dataset à pris pas mal de temps, il y avait une certaine liberté dans cette étape du projet que nous avions pas dans les autres. ce qui peut être à double tranchant. 
